@@ -12,3 +12,9 @@ npm i
 ```bash
 gulp
 ```
+
+## Running instructions
+
+```bash
+gulp run
+```
