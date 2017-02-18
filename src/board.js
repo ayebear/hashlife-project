@@ -14,6 +14,8 @@ export default class Board {
 
 		// Logic data
 		this.cells = new Set()
+
+		this.drawCounter = 0
 	}
 
 	setPixel(cell, on) {
@@ -134,7 +136,11 @@ export default class Board {
 
 	// Renders data to canvas
 	draw() {
-		this.ctx.putImageData(this.imageData, 0, 0)
-		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+		// this.drawCounter++
+		// if (this.drawCounter > 4) {
+			this.ctx.putImageData(this.imageData, 0, 0)
+			// this.drawCounter = 0
+		// }
+		// this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
 	}
 }
