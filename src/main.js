@@ -1,13 +1,14 @@
-import Board from 'board.js'
+import BoardHashlife from 'board_hashlife.js'
 
 let simulate = false
 let board = undefined
+let generation = 1
 
 function test() {
 	let listener = new window.keypress.Listener()
 
 	// Setup initial board
-	board = new Board()
+	board = new BoardHashlife()
 	board.importPattern('somepatternfile')
 	board.draw()
 
@@ -33,7 +34,7 @@ function test() {
 
 function loop() {
 	if (simulate) {
-		board.simulate()
+		board.simulate(generation++)
 		board.draw()
 	}
 	requestAnimationFrame(loop)

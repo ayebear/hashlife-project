@@ -4,7 +4,7 @@ Math.getRandomInt = function(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min
 }
 
-export default class Board {
+export default class BoardNaive {
 	constructor() {
 		// Canvas/drawing
 		this.canvas = document.getElementById('board')
@@ -100,7 +100,9 @@ export default class Board {
 	}
 
 	// Runs life simulation 1 iteration
-	simulate() {
+	simulate(generation = 1) {
+		let iteration = Math.pow(2, generation) - Math.pow(2, generation - 1)
+
 		let deadCells = new Set()
 		let toAdd = []
 		let toRemove = []
@@ -136,11 +138,6 @@ export default class Board {
 
 	// Renders data to canvas
 	draw() {
-		// this.drawCounter++
-		// if (this.drawCounter > 4) {
-			this.ctx.putImageData(this.imageData, 0, 0)
-			// this.drawCounter = 0
-		// }
-		// this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+		this.ctx.putImageData(this.imageData, 0, 0)
 	}
 }
