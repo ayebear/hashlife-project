@@ -3,18 +3,12 @@
 ## Setup instructions
 
 ```bash
-npm i -g gulp-cli
+npm i -g rollup
 npm i
 ```
 
 ## Build instructions
 
 ```bash
-gulp
-```
-
-## Running instructions
-
-```bash
-gulp run
+rollup -c
 ```
