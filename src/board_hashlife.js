@@ -1,3 +1,9 @@
+Math.getRandomInt = function(min, max) {
+	min = Math.ceil(min)
+	max = Math.floor(max)
+	return Math.floor(Math.random() * (max - min)) + min
+}
+
 export default class BoardHashlife {
 	constructor() {
 		this.sim = new gol.Simulation(16)
@@ -8,17 +14,41 @@ export default class BoardHashlife {
 	}
 
 	importPattern(patternFile) {
-		var gen0 = [
-			{x: -2, y: -1},
-			{x: -1, y: -1},
-			{x: -1, y:  1},
-			{x:  0, y: -1},
-			{x:  0, y:  0}
-		];
+		// var gen0 = [
+		// 	{x: -2, y: -1},
+		// 	{x: -1, y: -1},
+		// 	{x: -1, y:  1},
+		// 	{x:  0, y: -1},
+		// 	{x:  0, y:  0}
+		// ];
 
-		// Populate the universe with our glider
-		for (let elem of gen0) {
-			this.sim.set(elem.x, elem.y)  // Sets the cell to 'alive'
+		// // Populate the universe with our glider
+		// for (let elem of gen0) {
+		// 	this.sim.set(elem.x, elem.y)  // Sets the cell to 'alive'
+		// }
+
+
+		// TODO: Support importing a file format that contains initial board states
+		this.sim.set(12, 45)
+		this.sim.set(12, 46)
+		this.sim.set(12, 47)
+
+		this.sim.set(20, 50)
+		this.sim.set(21, 50)
+		this.sim.set(22, 50)
+
+		this.sim.set(60, 60)
+
+		for (let y = 20; y < 40; ++y) {
+			for (let x = 300; x < 320; ++x) {
+				this.sim.set(x, y)
+			}
+		}
+
+		for (let i = 0; i < 30000; ++i) {
+			let x = Math.getRandomInt(200, 400)
+			let y = Math.getRandomInt(300, 500)
+			this.sim.set(x, y)
 		}
 	}
 

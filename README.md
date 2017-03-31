@@ -9,6 +9,8 @@ npm i
 
 ## Build instructions
 
+Runs rollup with correct configuration and runs in background to watch file changes:
+
 ```bash
-rollup -c
+rollup -w -c
 ```
