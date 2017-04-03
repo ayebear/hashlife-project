@@ -52,28 +52,51 @@ export default class BoardNaive {
 		}
 	}
 
-	importPattern() {
+	importPattern(lines) {
+		console.log("Importing pattern, lines:"+lines.length);
 		// TODO: Support importing a file format that contains initial board states
-		this.addCell(this.hash(12, 45))
-		this.addCell(this.hash(12, 46))
-		this.addCell(this.hash(12, 47))
-
-		this.addCell(this.hash(20, 50))
-		this.addCell(this.hash(21, 50))
-		this.addCell(this.hash(22, 50))
-
-		this.addCell(this.hash(60, 60))
-
-		for (let y = 20; y < 40; ++y) {
-			for (let x = 300; x < 320; ++x) {
-				this.addCell(this.hash(x, y))
+		//this.addCell(this.hash(12, 45))
+		
+		var canvas = document.getElementById("board");
+		var canvasWidth = canvas.width;
+		var canvasHeight = canvas.height;
+		console.log("Canvas dimensions:"+canvasWidth+","+canvasHeight);
+		var x=0;
+		var y=0;
+		//First line contains the dimensions of the pattern
+		console.log(lines);
+		//The file comes in lines
+		var debug="";
+		for(var i=1;i<lines.length;i++){
+			
+			//First decode the line
+			var string = decode(lines[i]);
+			console.log(string);
+			for(var j=0;j<string.length;j++){
+				if(string[j]=='o'){
+					debug+="1";
+					this.addCell(this.hash(x+canvasWidth/2, y+canvasHeight/2));
+					x=x+1;
+				}
+				else if(string[j]=='b'){
+					debug+="0";
+					x=x+1;
+				}
 			}
+			x=0;
+			y=y+1;
+			debug+="\n";
+			
 		}
-
-		for (let i = 0; i < 30000; ++i) {
-			let x = Math.getRandomInt(200, 400)
-			let y = Math.getRandomInt(300, 500)
-			this.addCell(this.hash(x, y))
+		console.log(debug);
+		
+		
+		function decode (str) {
+			return str.replace(/(\d+)(\w)/g, 
+				function(m,n,c){
+					return new Array( parseInt(n,10)+1 ).join(c);
+				}
+			);
 		}
 	}
 
