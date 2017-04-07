@@ -1,9 +1,9 @@
-import BoardHashlife from 'board_hashlife.js'
-import BoardNaive from 'board_naive.js'
+import 'board_hashlife.js'
+import 'board_naive.js'
 
 let simulate = false
 let board = undefined
-let generation = 1
+let stepSize = 1
 
 function init() {
 	let listener = new window.keypress.Listener()
@@ -12,29 +12,29 @@ function init() {
 	board = new BoardNaive();
 	//board.importPattern('somepatternfile')
 	//board.draw()
-	
+
 	console.log("Test3");
-	
+
 	var canvas = document.getElementById("board");
-	
+
 	canvas.addEventListener('dragover',cancel);
 	canvas.addEventListener('dragenter',cancel);
 	canvas.addEventListener('drop',read);
 
 	function cancel(e) {
-	   e.preventDefault(); 
+	   e.preventDefault();
 	}
 	function read(e){
 		console.log("Chicken");
 		e = e || window.event;
 		cancel(e);
 		e.stopPropagation();
-		
+
 		var files = e.dataTransfer.files; // Array of all files
 		readFiles(files);
 		board.draw();
 	}
-	
+
 	// Handle holding enter to simulate
 	listener.register_combo({
 		'keys': 'enter',
@@ -87,16 +87,14 @@ function readFiles(files){
 		}
 		console.log("Running import on filtered");
 		board.importPattern(finished);
-		
-		
-		
+
 	}
 	reader.readAsText(file); // start reading the file data.
 }
 
 function loop() {
 	if (simulate) {
-		board.simulate(generation++)
+		board.simulate(stepSize)
 		board.draw()
 	}
 	requestAnimationFrame(loop)

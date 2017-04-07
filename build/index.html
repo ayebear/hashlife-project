@@ -8,6 +8,19 @@
 </head>
 <body>
 	<h1>Hashlife simulation</h1>
+	<form>
+		<input type="radio" name="algorithm" value="Step-by-step">Step-by-step
+		<input type="radio" name="algorithm" value="Hashlife">Hashlife<br>
+		Step size:
+		<input type="number" name="step-size" value="1"><br>
+		<input type="button" name="clear"  value="Clear">
+		<input type="button" name="run" value="Run"><br>
+	</form>
+
 	<canvas id="board" width="600" height="600" style="border:1px solid #000000;"></canvas>
+
+	<p>Population <span id="population"></span></p>
+	<p>Generation <span id="generation"></span></p>
+	<p>Step size <span id="step-size-display"></span></p>
 </body>
 </html>
