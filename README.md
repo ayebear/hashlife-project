@@ -1,16 +1,5 @@
 # Hashlife Project
 
-## Setup instructions
+## How to run
 
-```bash
-npm i -g rollup
-npm i
-```
-
-## Build instructions
-
-Runs rollup with correct configuration and runs in background to watch file changes:
-
-```bash
-rollup -w -c
-```
+Host directory on an HTTP server. Navigate to server or index.html from a browser.
