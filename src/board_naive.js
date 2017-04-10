@@ -61,6 +61,12 @@ export default class BoardNaive {
 		var canvasWidth = canvas.width;
 		var canvasHeight = canvas.height;
 		console.log("Canvas dimensions:"+canvasWidth+","+canvasHeight);
+		//Lets get the file dimensions
+		var startParts = lines[0].split(',');
+		var fileX=parseInt(startParts[0].split("= ")[1]);
+		var fileY=parseInt(startParts[1].split("= ")[1]);
+		console.log(fileX+","+fileY);
+		
 		var x=0;
 		var y=0;
 		//First line contains the dimensions of the pattern
@@ -75,7 +81,7 @@ export default class BoardNaive {
 			for(var j=0;j<string.length;j++){
 				if(string[j]=='o'){
 					debug+="1";
-					this.addCell(this.hash(x+canvasWidth/2, y+canvasHeight/2));
+					this.addCell(this.hash(x+(canvasWidth-fileX)/2, y+(canvasHeight-fileY)/2));
 					x=x+1;
 				}
 				else if(string[j]=='b'){
