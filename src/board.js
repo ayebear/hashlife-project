@@ -51,7 +51,7 @@ class Board {
 			for(var j=0;j<string.length;j++){
 				if(string[j]=='o'){
 					debug+="1";
-					this.addCell(this.hash(x+(canvasWidth-fileX)/2, y+(canvasHeight-fileY)/2));
+					this.addCell(hash(x+(canvasWidth-fileX)/2, y+(canvasHeight-fileY)/2));
 					x=x+1;
 				}
 				else if(string[j]=='b'){
