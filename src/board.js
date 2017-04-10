@@ -6,6 +6,10 @@ class Board {
 		this.ctx = this.canvas.getContext('2d')
 		this.ctx.imageSmoothingEnabled = false
 		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+
+		// Shared properties
+		this.population = 0
+		this.generation = 0
 	}
 
 	// TODO: Update to use modulus to support zooming out
@@ -19,9 +23,12 @@ class Board {
 		this.imageData.data[element + 3] = 255
 	}
 
-	// Renders data to canvas
+	// Renders data to canvas, updates interface
 	draw() {
 		this.ctx.putImageData(this.imageData, 0, 0)
+
+		document.getElementById('population').innerHTML = this.population
+		document.getElementById('generation').innerHTML = this.generation
 	}
 
 	importPattern(lines) {

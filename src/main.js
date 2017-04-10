@@ -98,11 +98,10 @@ function loop() {
 }
 
 // Handles changing the step size input by only a power of 2
-let oldNum = 1
 function handleLog2Input() {
 	let num = parseInt(document.getElementById("step-size").value)
 	let result = 0
-	if (num < oldNum) {
+	if (num < stepSize) {
 		result = Math.pow(2, Math.floor(Math.log2(num)))
 	} else {
 		result = Math.pow(2, Math.ceil(Math.log2(num)))
@@ -110,7 +109,7 @@ function handleLog2Input() {
 	if (isNaN(result)) {
 		result = 1
 	}
-	oldNum = result
+	stepSize = result
 	document.getElementById("step-size").value = result
 }
 

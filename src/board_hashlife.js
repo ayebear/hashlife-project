@@ -21,7 +21,7 @@ class BoardHashlife extends Board {
 
 			// Draw pixels
 			for (let cell of this.cells) {
-				this.drawCell(cell, 0)
+				this.drawCell(unhash(cell), 0)
 			}
 
 			// Update canvas
