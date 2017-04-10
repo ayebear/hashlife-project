@@ -39,5 +39,3 @@ class Range {
 function range(...args) {
 	return new Range(...args)
 }
-
-export { getRandomInt, hash, unhash, range }

@@ -1,6 +1,3 @@
-import 'board_hashlife.js'
-import 'board_naive.js'
-
 let simulate = false
 let board = undefined
 let stepSize = 1
@@ -98,6 +95,23 @@ function loop() {
 		board.draw()
 	}
 	requestAnimationFrame(loop)
+}
+
+// Handles changing the step size input by only a power of 2
+let oldNum = 1
+function handleLog2Input() {
+	let num = parseInt(document.getElementById("step-size").value)
+	let result = 0
+	if (num < oldNum) {
+		result = Math.pow(2, Math.floor(Math.log2(num)))
+	} else {
+		result = Math.pow(2, Math.ceil(Math.log2(num)))
+	}
+	if (isNaN(result)) {
+		result = 1
+	}
+	oldNum = result
+	document.getElementById("step-size").value = result
 }
 
 window.onload = init

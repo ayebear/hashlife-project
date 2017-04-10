@@ -1,7 +1,5 @@
-import { getRandomInt, hash, unhash, range } from 'utils.js'
-import 'board.js'
-
-export default class BoardNaive extends Board {
+// Step-by-step implementation
+class BoardNaive extends Board {
 	constructor() {
 		super()
 		this.cells = new Set()

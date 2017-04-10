@@ -1,7 +1,5 @@
-import { hash, unhash } from 'utils.js'
-
 // Base class for conway's game of life boards
-export default class Board {
+class Board {
 	constructor() {
 		// Canvas/drawing
 		this.canvas = document.getElementById('board')

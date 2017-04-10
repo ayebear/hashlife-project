@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hashlife comparisons</title>
+	<script type="text/javascript" src="lib/keypress-2.1.4.min.js"></script>
+	<script type="text/javascript" src="lib/gol.js"></script>
+	<script type="text/javascript" src="src/utils.js"></script>
+	<script type="text/javascript" src="src/board.js"></script>
+	<script type="text/javascript" src="src/board_hashlife.js"></script>
+	<script type="text/javascript" src="src/board_naive.js"></script>
+	<script type="text/javascript" src="src/main.js"></script>
+</head>
+<body>
+	<h1>Hashlife simulation</h1>
+	<form>
+		<select id="algorithm">
+			<option value="step-by-step">Step-by-step</option>
+			<option value="hashlife">Hashlife</option>
+		</select>
+		Step size:
+		<input type="number" id="step-size" value="1" min="1" oninput="handleLog2Input()">
+		<input type="button" id="clear"  value="Clear">
+		<input type="button" id="run" value="Run"><br>
+	</form>
+
+	<h3>Population: <span id="population">0</span> &mdash;
+	Generation: <span id="generation">0</span></h3>
+
+	<canvas id="board" width="640" height="480" style="border: 1px solid #000000;"></canvas>
+</body>
+</html>

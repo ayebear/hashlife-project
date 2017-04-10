@@ -1,7 +1,5 @@
-import { getRandomInt } from 'utils.js'
-import 'board.js'
-
-export default class BoardHashlife extends Board {
+// Hashlife implementation
+class BoardHashlife extends Board {
 	constructor() {
 		super()
 		this.sim = new gol.Simulation(16)
