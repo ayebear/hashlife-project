@@ -17,6 +17,7 @@ class Board {
 		this.generation = 0
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+		this.draw()
 	}
 
 	// TODO: Update to use modulus to support zooming out

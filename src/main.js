@@ -29,14 +29,12 @@ function init() {
 		board.draw();
 	}
 
-	// Handle holding enter to simulate
+	// Press enter to go forward by the step size
 	listener.register_combo({
 		'keys': 'enter',
 		'on_keydown': () => {
-			simulate = true
-		},
-		'on_keyup': () => {
-			simulate = false
+			board.simulate(stepSize)
+			board.draw()
 		}
 	})
 
@@ -112,6 +110,12 @@ function handleLog2Input() {
 	}
 	stepSize = result
 	document.getElementById("step-size").value = result
+}
+
+function toggleSimulate() {
+	simulate = !simulate
+	let text = simulate ? 'Stop' : 'Run'
+	document.getElementById('run').value = text
 }
 
 window.onload = init

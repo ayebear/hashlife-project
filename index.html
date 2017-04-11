@@ -19,8 +19,8 @@
 		</select>
 		Step size:
 		<input type="number" id="step-size" value="1" min="1" oninput="handleLog2Input()">
-		<input type="button" id="clear"  value="Clear">
-		<input type="button" id="run" value="Run"><br>
+		<input type="button" id="clear"  value="Clear" onclick="board.clear()">
+		<input type="button" id="run" value="Run" onclick="toggleSimulate()"><br>
 	</form>
 
 	<h3>Population: <span id="population">0</span> &mdash;
