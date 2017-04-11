@@ -10,8 +10,6 @@ function init() {
 	//board.importPattern('somepatternfile')
 	//board.draw()
 
-	console.log("Test3");
-
 	var canvas = document.getElementById("board");
 
 	canvas.addEventListener('dragover',cancel);
@@ -22,7 +20,6 @@ function init() {
 	   e.preventDefault();
 	}
 	function read(e){
-		console.log("Chicken");
 		e = e || window.event;
 		cancel(e);
 		e.stopPropagation();
@@ -45,6 +42,10 @@ function init() {
 
 	listener.simple_combo('r', () => {
 		//board.importPattern()
+		board.addCell('20, 20')
+		board.addCell('20, 21')
+		board.addCell('21, 20')
+		board.addCell('21, 21')
 		board.draw()
 	})
 
@@ -53,7 +54,6 @@ function init() {
 }
 
 function readFiles(files){
-	console.log(files);
 	if(files.length<=0)//Length is zero! How the hell did that happen?
 		return;
 	var first = true;
@@ -62,7 +62,6 @@ function readFiles(files){
 	reader.file=file;
 	reader.onload = function(e2) { // finished reading file data.
 		//Print out the file
-		console.log(e2.target.result);
 		var lines = e2.target.result.split('\n');
 		var filtered = [];
 		//Remove any lines that have a #
@@ -82,9 +81,11 @@ function readFiles(files){
 		for(var i=0;i<resultsSplit.length;i++){
 			finished.push(resultsSplit[i]);
 		}
-		console.log("Running import on filtered");
-		board.importPattern(finished);
 
+		// Clear the board, import the pattern, and draw it
+		board.clear()
+		board.importPattern(finished)
+		board.draw()
 	}
 	reader.readAsText(file); // start reading the file data.
 }

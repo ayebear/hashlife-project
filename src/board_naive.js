@@ -5,8 +5,12 @@ class BoardNaive extends Board {
 		this.cells = new Set()
 	}
 
+	clear() {
+		this.cells.clear()
+		this.clearCanvas()
+	}
+
 	addCell(cell) {
-		console.log('Adding: ' + cell)
 		if (!this.cells.has(cell)) {
 			this.population++
 		}
@@ -19,7 +23,7 @@ class BoardNaive extends Board {
 			this.population--
 		}
 		this.cells.delete(cell)
-		this.drawCell(unhash(cell), 192)
+		this.drawCell(unhash(cell), 220)
 	}
 
 	// Returns count of neighboring live cells

@@ -12,9 +12,16 @@ class Board {
 		this.generation = 0
 	}
 
+	clearCanvas() {
+		this.population = 0
+		this.generation = 0
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+	}
+
 	// TODO: Update to use modulus to support zooming out
 	drawCell(position, value) {
-		let element = (position.y * -4) * this.canvas.width + (position.x * 4)
+		let element = (position.y * 4) * this.canvas.width + (position.x * 4)
 
 		// Red, green, blue, alpha
 		this.imageData.data[element] = value
@@ -32,33 +39,24 @@ class Board {
 	}
 
 	importPattern(lines) {
-		console.log("Importing pattern, lines:"+lines.length);
-
-		var canvas = document.getElementById("board");
-		var canvasWidth = canvas.width;
-		var canvasHeight = canvas.height;
-		console.log("Canvas dimensions:"+canvasWidth+","+canvasHeight);
 		//Lets get the file dimensions
 		var startParts = lines[0].split(',');
 		var fileX=parseInt(startParts[0].split("= ")[1]);
 		var fileY=parseInt(startParts[1].split("= ")[1]);
-		console.log(fileX+","+fileY);
 
 		var x=0;
 		var y=0;
 		//First line contains the dimensions of the pattern
-		console.log(lines);
 		//The file comes in lines
 		var debug="";
 		for(var i=1;i<lines.length;i++){
 
 			//First decode the line
 			var string = decode(lines[i]);
-			console.log(string);
 			for(var j=0;j<string.length;j++){
 				if(string[j]=='o'){
 					debug+="1";
-					this.addCell(hash(x+(canvasWidth-fileX)/2, y+(canvasHeight-fileY)/2));
+					this.addCell(hash(x+(this.canvas.width-fileX)/2, y+(this.canvas.height-fileY)/2));
 					x=x+1;
 				}
 				else if(string[j]=='b'){
@@ -71,8 +69,6 @@ class Board {
 			debug+="\n";
 
 		}
-		console.log(debug);
-
 
 		function decode (str) {
 			return str.replace(/(\d+)(\w)/g,
