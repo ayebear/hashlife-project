@@ -22,13 +22,16 @@ class Board {
 
 	// TODO: Update to use modulus to support zooming out
 	drawCell(position, value) {
-		let element = (position.y * 4) * this.canvas.width + (position.x * 4)
+		// TODO: Use correct bounds when zooming
+		if (within(position, 0, 0, this.canvas.width, this.canvas.height)) {
+			let element = (position.y * 4) * this.canvas.width + (position.x * 4)
 
-		// Red, green, blue, alpha
-		this.imageData.data[element] = value
-		this.imageData.data[element + 1] = value
-		this.imageData.data[element + 2] = value
-		this.imageData.data[element + 3] = 255
+			// Red, green, blue, alpha
+			this.imageData.data[element] = value
+			this.imageData.data[element + 1] = value
+			this.imageData.data[element + 2] = value
+			this.imageData.data[element + 3] = 255
+		}
 	}
 
 	// Renders data to canvas, updates interface

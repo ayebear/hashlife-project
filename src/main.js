@@ -7,8 +7,6 @@ function init() {
 
 	// Setup initial board
 	board = new BoardNaive();
-	//board.importPattern('somepatternfile')
-	//board.draw()
 
 	var canvas = document.getElementById("board");
 

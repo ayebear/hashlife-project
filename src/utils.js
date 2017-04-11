@@ -39,3 +39,12 @@ class Range {
 function range(...args) {
 	return new Range(...args)
 }
+
+function clamp(value, min, max) {
+	return Math.min(Math.max(value, min), max)
+}
+
+function within(position, left, top, width, height) {
+	return (position.x >= left && position.x < left + width
+		&& position.y >= top && position.y < top + height)
+}
