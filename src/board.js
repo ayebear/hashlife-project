@@ -37,7 +37,7 @@ class Board {
 	// Renders data to canvas, updates interface
 	draw() {
 		this.ctx.putImageData(this.imageData, 0, 0)
-
+		
 		document.getElementById('population').innerHTML = this.population
 		document.getElementById('generation').innerHTML = this.generation
 	}

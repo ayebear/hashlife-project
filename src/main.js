@@ -1,8 +1,17 @@
 let simulate = false
 let board = undefined
 let stepSize = 1
+var stats = undefined
 
 function init() {
+	stats = new MemoryStats();
+
+    stats.domElement.style.position = 'fixed';
+    stats.domElement.style.right        = '0px';
+    stats.domElement.style.bottom       = '0px';
+    
+    document.body.appendChild( stats.domElement );
+
 	let listener = new window.keypress.Listener()
 
 	// Setup initial board
@@ -89,6 +98,7 @@ function loop() {
 		board.simulate(stepSize)
 		board.draw()
 	}
+	stats.update();
 	requestAnimationFrame(loop)
 }
 
