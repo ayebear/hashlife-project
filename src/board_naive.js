@@ -5,14 +5,25 @@ class BoardNaive extends Board {
 		this.cells = new Set()
 	}
 
+	clear() {
+		this.cells.clear()
+		this.clearCanvas()
+	}
+
 	addCell(cell) {
+		if (!this.cells.has(cell)) {
+			this.population++
+		}
 		this.cells.add(cell)
 		this.drawCell(unhash(cell), 0)
 	}
 
 	removeCell(cell) {
+		if (this.cells.has(cell)) {
+			this.population--
+		}
 		this.cells.delete(cell)
-		this.drawCell(unhash(cell), 255)
+		this.drawCell(unhash(cell), 220)
 	}
 
 	// Returns count of neighboring live cells
@@ -39,7 +50,10 @@ class BoardNaive extends Board {
 
 	// Runs life simulation stepSize number of times
 	simulate(stepSize = 1) {
+		console.log(`Simulating ${stepSize} generation(s)...`)
 		for (let i of range(0, stepSize)) {
+			this.generation++
+
 			let deadCells = new Set()
 			let toAdd = []
 			let toRemove = []

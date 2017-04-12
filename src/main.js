@@ -7,10 +7,6 @@ function init() {
 
 	// Setup initial board
 	board = new BoardNaive();
-	//board.importPattern('somepatternfile')
-	//board.draw()
-
-	console.log("Test3");
 
 	var canvas = document.getElementById("board");
 
@@ -22,7 +18,6 @@ function init() {
 	   e.preventDefault();
 	}
 	function read(e){
-		console.log("Chicken");
 		e = e || window.event;
 		cancel(e);
 		e.stopPropagation();
@@ -32,19 +27,21 @@ function init() {
 		board.draw();
 	}
 
-	// Handle holding enter to simulate
+	// Press enter to go forward by the step size
 	listener.register_combo({
 		'keys': 'enter',
 		'on_keydown': () => {
-			simulate = true
-		},
-		'on_keyup': () => {
-			simulate = false
+			board.simulate(stepSize)
+			board.draw()
 		}
 	})
 
 	listener.simple_combo('r', () => {
 		//board.importPattern()
+		board.addCell('20, 20')
+		board.addCell('20, 21')
+		board.addCell('21, 20')
+		board.addCell('21, 21')
 		board.draw()
 	})
 
@@ -53,7 +50,6 @@ function init() {
 }
 
 function readFiles(files){
-	console.log(files);
 	if(files.length<=0)//Length is zero! How the hell did that happen?
 		return;
 	var first = true;
@@ -62,7 +58,6 @@ function readFiles(files){
 	reader.file=file;
 	reader.onload = function(e2) { // finished reading file data.
 		//Print out the file
-		console.log(e2.target.result);
 		var lines = e2.target.result.split('\n');
 		var filtered = [];
 		//Remove any lines that have a #
@@ -82,9 +77,11 @@ function readFiles(files){
 		for(var i=0;i<resultsSplit.length;i++){
 			finished.push(resultsSplit[i]);
 		}
-		console.log("Running import on filtered");
-		board.importPattern(finished);
 
+		// Clear the board, import the pattern, and draw it
+		board.clear()
+		board.importPattern(finished)
+		board.draw()
 	}
 	reader.readAsText(file); // start reading the file data.
 }
@@ -98,11 +95,10 @@ function loop() {
 }
 
 // Handles changing the step size input by only a power of 2
-let oldNum = 1
 function handleLog2Input() {
 	let num = parseInt(document.getElementById("step-size").value)
 	let result = 0
-	if (num < oldNum) {
+	if (num < stepSize) {
 		result = Math.pow(2, Math.floor(Math.log2(num)))
 	} else {
 		result = Math.pow(2, Math.ceil(Math.log2(num)))
@@ -110,8 +106,14 @@ function handleLog2Input() {
 	if (isNaN(result)) {
 		result = 1
 	}
-	oldNum = result
+	stepSize = result
 	document.getElementById("step-size").value = result
+}
+
+function toggleSimulate() {
+	simulate = !simulate
+	let text = simulate ? 'Stop' : 'Run'
+	document.getElementById('run').value = text
 }
 
 window.onload = init
