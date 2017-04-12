@@ -37,7 +37,7 @@ class Board {
 	// Renders data to canvas, updates interface
 	draw() {
 		this.ctx.putImageData(this.imageData, 0, 0)
-
+		
 		document.getElementById('population').innerHTML = this.population
 		document.getElementById('generation').innerHTML = this.generation
 	}
@@ -48,6 +48,7 @@ class Board {
 		var fileX=parseInt(startParts[0].split("= ")[1]);
 		var fileY=parseInt(startParts[1].split("= ")[1]);
 
+		console.log("X:"+fileX+",Y:"+fileY);
 		var x=0;
 		var y=0;
 		//First line contains the dimensions of the pattern
