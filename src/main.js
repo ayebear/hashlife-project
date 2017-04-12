@@ -27,22 +27,20 @@ function init() {
 		board.draw();
 	}
 
-	// Press enter to go forward by the step size
-	listener.register_combo({
-		'keys': 'enter',
-		'on_keydown': () => {
-			board.simulate(stepSize)
-			board.draw()
-		}
+	// Press enter to go forward once by the step size
+	listener.simple_combo('enter', () => {
+		board.simulate(stepSize)
+		board.draw()
 	})
 
+	// Press space to toggle simulation
+	listener.simple_combo('space', () => {
+		toggleSimulate()
+	})
+
+	// Press r to clear the board
 	listener.simple_combo('r', () => {
-		//board.importPattern()
-		board.addCell('20, 20')
-		board.addCell('20, 21')
-		board.addCell('21, 20')
-		board.addCell('21, 21')
-		board.draw()
+		board.clear()
 	})
 
 	// Start loop
