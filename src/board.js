@@ -37,7 +37,7 @@ class Board {
 	// Renders data to canvas, updates interface
 	draw() {
 		this.ctx.putImageData(this.imageData, 0, 0)
-		
+
 		document.getElementById('population').innerHTML = this.population
 		document.getElementById('generation').innerHTML = this.generation
 	}
@@ -83,6 +83,18 @@ class Board {
 					return new Array( parseInt(n,10)+1 ).join(c);
 				}
 			);
+		}
+	}
+
+	serialize() {
+		return '[]'
+	}
+
+	deserialize(data) {
+		// Array of cell hashes
+		let cells = JSON.parse(data)
+		for (let cell of cells) {
+			this.addCell(cell)
 		}
 	}
 }

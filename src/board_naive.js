@@ -88,4 +88,8 @@ class BoardNaive extends Board {
 			}
 		}
 	}
+
+	serialize() {
+		return JSON.stringify(Array.from(this.cells))
+	}
 }
