@@ -50,8 +50,8 @@ class BoardNaive extends Board {
 
 	// Runs life simulation stepSize number of times
 	simulate(stepSize = 1) {
-		console.log(window.performance.memory);
-		console.log(`Simulating ${stepSize} generation(s)...`)
+		// console.log(window.performance.memory);
+		// console.log(`Simulating ${stepSize} generation(s)...`)
 		for (let i of range(0, stepSize)) {
 			this.generation++
 
@@ -87,5 +87,9 @@ class BoardNaive extends Board {
 				this.removeCell(cell)
 			}
 		}
+	}
+
+	serialize() {
+		return JSON.stringify(Array.from(this.cells))
 	}
 }
