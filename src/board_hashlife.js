@@ -2,45 +2,30 @@
 class BoardHashlife extends Board {
 	constructor() {
 		super()
-		this.sim = new gol.Simulation(16)
+		this.life = new LifeUniverse()
+		this.drawer = new LifeCanvasDrawer()
+		this.drawer.init(this.canvas, this.ctx)
+		this.drawer.set_size(this.canvas.width, this.canvas.height)
 	}
 
 	clear() {
-		this.sim = new gol.Simulation(16)
-		this.clearCanvas()
+		// this.life.clear_pattern()
+		// this.clearCanvas()
 	}
 
 	addCell(cell) {
 		let pos = unhash(cell)
-		this.sim.set(pos.x, pos.y)
+		this.life.set_bit(pos.x, pos.y, true)
 	}
 
 	simulate(stepSize = 1) {
 		this.generation += stepSize
 		this.population = 0
 
-		// Get next generation with step size
-		let cells = this.sim.get(stepSize)
-
-		// Draw the cells
-		for (let cell of cells) {
-			this.drawCell(cell, 0)
-		}
-
-		// Save next state so that it can step with a fixed size
-		this.sim = new gol.Simulation(16)
-		for (let cell of cells) {
-			this.population++
-			this.sim.set(cell.x, cell.y)
-		}
+		this.life.next_generation()
 	}
 
 	serialize() {
-		let data = []
-		let cells = this.sim.get(0)
-		for (let cell of cells) {
-			data.push(hash(cell))
-		}
-		return JSON.stringify(data)
+		return '[]'
 	}
 }
