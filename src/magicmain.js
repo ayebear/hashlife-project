@@ -20,13 +20,13 @@
 
 function MagicMain()
 {
-	
+
 	var
     /** @const */
     DEFAULT_BORDER = 0.25,
     /** @const */
     DEFAULT_FPS = 20;
-	
+
 	var initialTitle = document.title;
 
 	var
@@ -78,7 +78,7 @@ function MagicMain()
 			"p94s,P94S|breeder1,Breeder 1|tlogtgrowth,tlog(t) growth|" +
 			"logt2growth,Log(t)^2 growth|infinitelwsshotel,Infinite LWSS hotel|c5greyship,c/5 greyship"
 		).split("|");
-	
+
 
 
 /** @type {function(function())} */
@@ -91,7 +91,7 @@ var nextFrame =
     // setup
 	this.life=life;
 
-    
+
 	if(loaded)
 	{
 		// onload has been called already
@@ -108,10 +108,10 @@ var nextFrame =
 	}
 
 	init_ui();
-	
+
 	drawer.set_size($("lazyboard").width, $("lazyboard").height);
 	reset_settings();
-	
+
 
 	// This gets called, when a pattern is loaded.
 	// It has to be called at least once before anything can happen.
@@ -217,8 +217,8 @@ var nextFrame =
 	{
 		max_fps = +parameters["fps"];
 	}
-	
-	
+
+
 
 	function try_load_meta()
 	{
@@ -319,13 +319,6 @@ var nextFrame =
 
 		var style_element = document.createElement("style");
 		document.head.appendChild(style_element);
-
-		window.onresize = debounce(function()
-		{
-			drawer.set_size(window.innerWidth, document.body.offsetHeight);
-
-			requestAnimationFrame(lazy_redraw.bind(0, life.root));
-		}, 500);
 
 		$("gen_step").onchange = function(e)
 		{
@@ -603,7 +596,7 @@ var nextFrame =
 			return true;
 		};
 
-		
+
 
 		var select_rules = $("select_rules").getElementsByTagName("span");
 
@@ -722,8 +715,8 @@ var nextFrame =
 			hide_overlay();
 		}
 
-		
-		
+
+
 
 
 		$("settings_abort").onclick =
