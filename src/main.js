@@ -1,7 +1,12 @@
 let main = undefined
+var magic = undefined
 
 class Main {
-	constructor() {
+	
+	
+
+	
+	constructor() {//This is the same as onload
 		this.simulate = false
 		this.stepSize = 1
 
@@ -17,6 +22,11 @@ class Main {
 
 		this.setupKeyboardInput()
 		this.setupStats()
+		
+		//Setup the hashlife stuff we got in the lazy canvas
+		magic = new MagicMain();
+		console.log(magic);
+		
 
 		// Start loop
 		requestAnimationFrame(() => {this.loop()})
@@ -82,6 +92,7 @@ class Main {
 		}
 		this.stepSize = result
 		document.getElementById("step-size").value = result
+		magic.life.set_step(result);
 	}
 
 	toggleSimulate() {
@@ -94,6 +105,7 @@ class Main {
 		this.boardSwitcher.board.clear()
 	}
 }
+
 
 window.onload = () => {
 	main = new Main()

@@ -11,7 +11,12 @@
 	<script type="text/javascript" src="src/board_switcher.js"></script>
 	<script type="text/javascript" src="src/file_drop.js"></script>
 	<script type="text/javascript" src="src/memory_stats.js"></script>
+	<script src="src/life.js"></script>
+	<script src="src/formats.js"></script>
+	<script src="src/draw.js"></script>
+	<script type="text/javascript" src="src/magicmain.js"></script>
 	<script type="text/javascript" src="src/main.js"></script>
+	
 </head>
 <body>
 	<h1>Conway's Game of Life Algorithms</h1>
@@ -30,5 +35,150 @@
 	Generation: <span id="generation">0</span></h3>
 
 	<canvas id="board" width="640" height="480" style="border: 1px solid #000000;"></canvas>
+	<div id="overlay">
+		<div id="about">
+			<h2>Conway's Game of Life in JavaScript</h2>
+			<div id="notice">
+				<h3 style="color: orange">Sorry, this applications needs JavaScript to work.</h3>
+				<center>
+					<img src="pattern.gif" alt="Bi Gun">
+				</center>
+				<br>
+				<br>
+			</div>
+			This is an implementation of <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Conway's Game of Life</a> or
+			more precisely, the super-fast <a href="https://en.wikipedia.org/wiki/Hashlife" target="_blank">Hashlife</a> algorithm,
+			written in JavaScript using the <code>canvas</code>-tag. It can simulate the largest known patterns, including the
+			<a href="?pattern=caterpillar" id="caterpillar_link" title="Click to load" class="link">Caterpillar</a> (7.6MB, 11m cells) and
+			<a href="?pattern=gemini" id="gemini_link" title="Click to load" class="link">Gemini</a> (1.6MB, 846k cells).
+			<br>
+			<br>
+			<div id="about_main" style="display: none">
+				If you encounter any bugs or have feedback, you can contact me at <a title="Click to show Email" href="?pattern=email">this email</a>.<br>
+				<br>
+				Click on the pattern name on the bottom left to get some informations about the current pattern.
+				<br>
+				<br>
+				<a href="examples" target="_blank">List of all patterns</a> &mdash;
+				<a href="https://github.com/copy/life" target="_blank">Source code on Github</a> &mdash;
+				<a href="https://github.com/copy/life/issues" target="_blank">Report an issue</a>
+				<br>
+				<br>
+				<b>Controls:</b>
+				<pre>
+			Left mouse          - Move around
+			Right mouse         - Create / Delete cells
+			Mouse wheel         - Zoom
+
+			Arrow keys, HJKL    - Move around
+			+, -                - Zoom
+			Space               - One generation forward
+			Tab                 - Many generations forward
+			Enter               - Run/Pause
+			Backspace           - Rewind
+			]                   - Faster
+			[                   - Slower
+			Escape              - Close Popups
+				</pre>
+			</div>
+			<br>
+			<br>
+			<br>
+			<span class="button2" id="about_close" style="display: none">Ok</span>
+		</div>
+		<div id="import_dialog" style="display: none;">
+			<h2>Import Pattern</h2>
+			Supports RLE, Life 1.06, Plaintext
+			<br>
+			<br>
+			<textarea placeholder="Paste pattern file here" id="import_text"></textarea>
+			<br>
+			Or: <input type="file" id="import_file">
+			<br>
+			<br>
+			<div id="import_info"></div>
+			<br>
+			<br>
+			<br>
+			<span id="import_submit" class="button2">Import</span>
+			<span id="import_abort" class="button2">Abort</span>
+		</div>
+		<div id="alert" style="display: none;">
+			<div id="alert_text">
+				<h2 id="pattern_title"></h2>
+				<div id="pattern_description"></div>
+				<br>
+				<div id="pattern_urls"></div>
+				<br>
+				<div id="pattern_file_container">
+					Pattern file: <a target="_blank" id="pattern_file_link" href=""></a>
+				</div>
+				<div id="pattern_link_container">
+					Link to view online:
+					<a id="pattern_link" target="_blank" href=""></a>
+				</div>
+			</div>
+			<br>
+			<br>
+			<span class="button2" id="alert_close">Ok</span>
+		</div>
+		<div id="pattern_chooser" style="display: none;">
+			Source: <a href="http://www.conwaylife.com/wiki/Main_Page" target="_blank">www.conwaylife.com</a>. Thanks!
+			<div id="pattern_list"></div>
+			<span class="button2" id="pattern_close">Close</span>
+		</div>
+		<div id="settings_dialog" style="display: none;">
+			<h2>Settings</h2>
+			<div class="left" id="select_rules">
+				Rule<br>
+				<small>
+					Or pick one:
+					<span class="link" data-rule="23/3">Conway</span>
+					<span class="link" data-rule="23/36">HighLife</span>
+					<span class="link" data-rule="125/36">2x2</span>
+					<span class="link" data-rule="1357/1357">Replicator</span>
+				</small>
+			</div>
+			<div class="right">
+				<input type="text" id="rule">
+			</div>
+			<br class="clear">
+			<br>
+			<div class="left">
+				Maximum Frames per Second
+			</div>
+			<div class="right">
+				<input type="number" min="1" id="max_fps" style="width: 60px">
+			</div>
+			<br class="clear">
+			<br>
+			<div class="left">
+				Generation step<br>
+				<small>Only powers of 2 (automatically rounded)</small>
+			</div>
+			<div class="right">
+				<input type="number" step="any" id="gen_step" style="width: 60px">
+			</div>
+			<br class="clear">
+			<br>
+			<div class="left">
+				Border width<br>
+				<small>0 .. 0.5</small>
+			</div>
+			<div class="right">
+				<input type="number" min="0" max="0.5" step="0.05" id="border_width" style="width: 60px">
+			</div>
+			<br>
+			<br>
+			<br>
+			<hr>
+			<br>
+			<br>
+			<span id="settings_submit" class="button2">Save</span>
+			<span id="settings_reset" class="button2">Reset</span>
+			<span id="settings_abort" class="button2">Abort</span>
+		</div>
+	</div>
+	<canvas id="lazyboard" width="640" height="480" style="border: 1px solid #000000;"></canvas>
 </body>
 </html>
