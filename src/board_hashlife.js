@@ -1,31 +1,43 @@
+class QuadTree {
+	constructor() {
+		// nw, ne, sw, and se - these will be children
+	}
+}
+
 // Hashlife implementation
 class BoardHashlife extends Board {
 	constructor() {
 		super()
-		this.sim = new gol.Simulation(16)
+		this.root = new QuadTree()
 	}
 
-	simulate(generation = 1) {
-		this.cells = this.sim.get(generation)
-
-		// TODO: Save next state so that it can step with a fixed size
-		// this.set(this.cells)
-
-		this.drawAll()
+	clear() {
+		this.root = new QuadTree()
+		this.clearCanvas()
 	}
 
-	drawAll() {
-		if (this.cells !== undefined) {
-			// Clear canvas
-			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+	draw() {
+		// Iterate through quadtree and draw data in leaf nodes
 
-			// Draw pixels
-			for (let cell of this.cells) {
-				this.drawCell(unhash(cell), 0)
-			}
+		// Draw canvas data, and update population display
+		super.draw()
+	}
 
-			// Update canvas
-			// this.ctx.putImageData(this.imageData, 0, 0)
-		}
+	addCell(cell) {
+		let pos = unhash(cell)
+
+		// Set bit in quadtree, will need to recurse down to the correct location
+	}
+
+	simulate(stepSize = 1) {
+		this.generation += stepSize
+		this.population = 0
+
+		// Step forward using hashlife algorithm
+	}
+
+	serialize() {
+		// Serialize quadtree data back into an array of live cell positions
+		return '[]'
 	}
 }

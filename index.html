@@ -3,13 +3,14 @@
 <head>
 	<title>GOL Comparison</title>
 	<script type="text/javascript" src="lib/keypress-2.1.4.min.js"></script>
-	<script type="text/javascript" src="lib/gol.js"></script>
 	<script type="text/javascript" src="src/utils.js"></script>
 	<script type="text/javascript" src="src/board.js"></script>
 	<script type="text/javascript" src="src/board_hashlife.js"></script>
 	<script type="text/javascript" src="src/board_naive.js"></script>
+	<script type="text/javascript" src="src/board_switcher.js"></script>
+	<script type="text/javascript" src="src/file_drop.js"></script>
+	<script type="text/javascript" src="src/memory_stats.js"></script>
 	<script type="text/javascript" src="src/main.js"></script>
-	<script type="text/javascript" src="src/memory-stats.js"></script>
 </head>
 <body>
 	<h1>Conway's Game of Life Algorithms</h1>
@@ -19,9 +20,9 @@
 			<option value="hashlife">Hashlife</option>
 		</select>
 		Step size:
-		<input type="number" id="step-size" value="1" min="1" oninput="handleLog2Input()">
-		<input type="button" id="clear"  value="Clear" onclick="board.clear()">
-		<input type="button" id="run" value="Run" onclick="toggleSimulate()"><br>
+		<input type="number" id="step-size" value="1" min="1" oninput="main.handleLog2Input()">
+		<input type="button" id="clear"  value="Clear" onclick="main.clear()">
+		<input type="button" id="run" value="Run" onclick="main.toggleSimulate()"><br>
 	</form>
 
 	<h3>Population: <span id="population">0</span> &mdash;
