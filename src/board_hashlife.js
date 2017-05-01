@@ -18,6 +18,9 @@ class BoardHashlife extends Board {
 
 	draw() {
 		// Iterate through quadtree and draw data in leaf nodes
+
+		// Draw canvas data, and update population display
+		super.draw()
 	}
 
 	addCell(cell) {
