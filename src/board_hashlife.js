@@ -96,7 +96,7 @@ class QuadTree {
 		// Reached the cell that needs to be set
 		// Return an already allocated cell, either alive or dead based on state
 		if (this.level === 0) {
-			return this.board.baseCell(state)
+			return this.board.baseCells[state]
 		}
 
 		let halfSize = Math.floor(this.width / 2)
@@ -131,7 +131,7 @@ class QuadTree {
 		let ca = ids[sw][nw]; let cb = ids[sw][ne]; let da = ids[sw][sw]; let db = ids[sw][se]
 		let cc = ids[se][nw]; let cd = ids[se][ne]; let dc = ids[se][sw]; let dd = ids[se][se]
 
-		// Score the cells around the 2x2 area children of children
+		// Score the cells in the center, with their surrounding neighbors
 		let scores = [
 			this.score(bb, aa + ab + ac + ba + bc + ca + cb + cc),
 			this.score(bc, ab + ac + ad + bb + bd + cb + cc + cd),
@@ -184,7 +184,23 @@ class BoardHashlife extends Board {
 	}
 
 	init() {
-		this.root = new QuadTree(this)
+		this.root = this.baseCells[0]
+		this.memo = []
+
+		// All possible states of a 2x2 cell
+		for (let i = 0; i < 16; ++i) {
+			// Example: [1, 0, 1, 0]
+			let index = [i & 1, (i & 2) / 2, (i & 4) / 4, (i & 8) / 8]
+
+			// Example: [Alive, Dead, Alive, Dead]
+			let nodes = index.map(state => this.baseCells[state])
+
+			// Store in hash table, generate new IDs
+			this.memo[index] = new QuadTree(this, i + 2, nodes)
+		}
+
+		// Stores empty nodes
+		this.empty = [this.baseCells[0], this.memo[[0, 0, 0, 0]]]
 	}
 
 	clear() {
@@ -194,6 +210,7 @@ class BoardHashlife extends Board {
 
 	draw() {
 		// Iterate through quadtree and draw data in leaf nodes
+		// An easier solution would be to get the area as a list, then just go through that and draw those as pixels
 
 		// Draw canvas data, and update population display
 		super.draw()
@@ -217,9 +234,5 @@ class BoardHashlife extends Board {
 	serialize() {
 		// Serialize quadtree data back into an array of live cell positions
 		return '[]'
-	}
-
-	baseCell(state) {
-		return this.baseCells[state]
 	}
 }
