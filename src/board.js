@@ -19,6 +19,10 @@ class Board {
 		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
 		this.draw()
 	}
+	
+	clearImage(){
+		this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+	}
 
 	// TODO: Update to use modulus to support zooming out
 	drawCell(position, value) {
