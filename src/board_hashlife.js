@@ -126,10 +126,10 @@ class QuadTree {
 		let ids = this.children.map(child => child.getIds())
 
 		// Alias IDs for readability
-		let aa = ids[nw][nw]; let ab = ids[nw][ne]; let ba = ids[nw][sw]; let bb = ids[nw][se]
-		let ac = ids[ne][nw]; let ad = ids[ne][ne]; let bc = ids[ne][sw]; let bd = ids[ne][se]
-		let ca = ids[sw][nw]; let cb = ids[sw][ne]; let da = ids[sw][sw]; let db = ids[sw][se]
-		let cc = ids[se][nw]; let cd = ids[se][ne]; let dc = ids[se][sw]; let dd = ids[se][se]
+		let aa = ids[nw][nw], ab = ids[nw][ne], ba = ids[nw][sw], bb = ids[nw][se]
+		let ac = ids[ne][nw], ad = ids[ne][ne], bc = ids[ne][sw], bd = ids[ne][se]
+		let ca = ids[sw][nw], cb = ids[sw][ne], da = ids[sw][sw], db = ids[sw][se]
+		let cc = ids[se][nw], cd = ids[se][ne], dc = ids[se][sw], dd = ids[se][se]
 
 		// Score the cells in the center, with their surrounding neighbors
 		let scores = [
@@ -143,8 +143,24 @@ class QuadTree {
 		return this.board.memo[scores]
 	}
 
-	subdivide() {
+	subdivide(stepSize) {
+		let halfSteps = Math.floor(Math.pow(2, this._level - 2) / 2)
 
+		let step1 = (stepSize <= halfSteps ? 0 : halfSteps)
+		let step2 = stepSize - step1
+		console.log(`Step 1: ${step1}, Step 2: ${step2}`)
+
+		let sub = this.getSavedCenter(step1)
+		let n00 = sub[0], n01 = sub[1], n02 = sub[2]
+		let n10 = sub[3], n11 = sub[4], n12 = sub[5]
+		let n20 = sub[6], n21 = sub[7], n22 = sub[8]
+
+		return this.board.getNode(
+			this.board.getNode(n00, n01, n10, n11).nextCenter(step2),
+			this.board.getNode(n01, n02, n11, n12).nextCenter(step2),
+			this.board.getNode(n10, n11, n20, n21).nextCenter(step2),
+			this.board.getNode(n11, n12, n21, n22).nextCenter(step2)
+		)
 	}
 
 	nextCenter(stepSize = 1) {
@@ -168,6 +184,37 @@ class QuadTree {
 		this.cache[stepSize] = result
 
 		return result
+	}
+
+	getSavedCenter(stepSize) {
+		let result = []
+		for (let i = 0; i < 9; ++i) {
+			result[i] = this.subquad(i).nextCenter(stepSize)
+		}
+		return result
+	}
+
+	center() {
+		if (this.cache && this.cache.length > 0) {
+			return this.cache[0]
+		}
+
+		// Get center 2x2 area of nodes, within the 4x4 area
+		let result = this.board.getNode(this.nw.se, this.ne.sw, this.sw.ne, this.se.nw)
+		this.cache[0] = result
+		return result
+	}
+
+	subquad(i) {
+		if (i == 0) return this.nw
+		if (i == 1) return this.board.getNode(this.nw.ne, this.ne.nw, this.nw.se, this.ne.sw)
+		if (i == 2) return this.ne
+		if (i == 3) return this.board.getNode(this.nw.sw, this.nw.se, this.sw.nw, this.sw.ne)
+		if (i == 4) return this.center()
+		if (i == 5) return this.board.getNode(this.ne.sw, this.ne.se, this.se.nw, this.se.ne)
+		if (i == 6) return this.sw
+		if (i == 7) return this.board.getNode(this.sw.ne, this.se.nw, this.sw.se, this.se.sw)
+		if (i == 8) return this.se
 	}
 }
 
