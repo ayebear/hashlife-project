@@ -58,7 +58,19 @@ class Main {
 
 		// Continue simulation if currently running
 		if (this.simulate) {
+			let start = performance.now()
+
 			this.boardSwitcher.board.simulate(this.stepSize)
+
+			let end = performance.now()
+			this.boardSwitcher.board.record({
+				algorithm: this.boardSwitcher.current,
+				generation: this.boardSwitcher.board.generation,
+				population: this.boardSwitcher.board.population,
+				stepSize: this.stepSize,
+				time: (end - start)
+			})
+
 			this.boardSwitcher.board.draw()
 		}
 
