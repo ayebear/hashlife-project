@@ -9,12 +9,12 @@ const se = 3
 
 // A node of a quad tree, meant to be used by the hashlife implementation
 class QuadTree {
-	constructor(board, id = 0, children = undefined) {
+	constructor(board, id = undefined, children = undefined) {
 		// Back reference to board state
 		this.board = board
 
 		// Unique identifier for this node
-		this.id = id
+		this.id = id || board.nextId++
 
 		// These are more QuadTree instances, ordered as such: [nw, ne, sw, se]
 		// If this is undefined, we are in a leaf node
@@ -24,36 +24,36 @@ class QuadTree {
 		this.level = 0
 
 		// Number of live cells in this node
-		this.count = id
+		this.count = this.id
 
 		// For memoizing results
 		this.cache = []
 
 		// Not just an initial cell
-		if (id > 1 && children) {
+		if (this.id > 1 && children) {
 			// 1 more than any of its children
-			this.level = nw.level + 1
+			this.level = this.nw.level + 1
 
 			// Add up children counts
-			this.count = nw.count + ne.count + sw.count + se.count
+			this.count = this.nw.count + this.ne.count + this.sw.count + this.se.count
 		}
 	}
 
 	// Getters for specific children
 	get nw() {
-		return this.children[0]
+		return this.children ? this.children[nw] : undefined
 	}
 
 	get ne() {
-		return this.children[1]
+		return this.children ? this.children[ne] : undefined
 	}
 
 	get sw() {
-		return this.children[2]
+		return this.children ? this.children[sw] : undefined
 	}
 
 	get se() {
-		return this.children[3]
+		return this.children ? this.children[se] : undefined
 	}
 
 	// Returns the power of 2 of the current depth of the tree
@@ -144,7 +144,8 @@ class QuadTree {
 	}
 
 	subdivide(stepSize) {
-		let halfSteps = Math.floor(Math.pow(2, this._level - 2) / 2)
+		console.log(`subdivide(${stepSize}) at level ${this.level}`)
+		let halfSteps = Math.floor(Math.pow(2, this.level - 2) / 2)
 
 		let step1 = (stepSize <= halfSteps ? 0 : halfSteps)
 		let step2 = stepSize - step1
@@ -224,14 +225,20 @@ class BoardHashlife extends Board {
 	constructor() {
 		super()
 
-		// Setup base cells
-		this.baseCells = [new QuadTree(this, 0), new QuadTree(this, 1)]
-
 		this.init()
 	}
 
 	init() {
+		// Used for assigning new IDs
+		this.nextId = 2
+
+		// Setup base cells
+		this.baseCells = [new QuadTree(this, 0), new QuadTree(this, 1)]
+
+		// Set root node
 		this.root = this.baseCells[0]
+
+		// Hash table
 		this.memo = []
 
 		// All possible states of a 2x2 cell
@@ -242,12 +249,14 @@ class BoardHashlife extends Board {
 			// Example: [Alive, Dead, Alive, Dead]
 			let nodes = index.map(state => this.baseCells[state])
 
-			// Store in hash table, generate new IDs
-			this.memo[index] = new QuadTree(this, i + 2, nodes)
+			// Store node for this 2x2 arrangement in the hash table
+			this.memo[index] = new QuadTree(this, undefined, nodes)
 		}
 
 		// Stores empty nodes
 		this.empty = [this.baseCells[0], this.memo[[0, 0, 0, 0]]]
+
+		this.coreIds = this.nextId - 1
 	}
 
 	clear() {
@@ -266,20 +275,56 @@ class BoardHashlife extends Board {
 	addCell(cell) {
 		let pos = unhash(cell)
 
-		// Set bit in quadtree, will need to recurse down to the correct location
-		this.root.set(pos.x, pos.y, 1)
+		this.set(pos.x, pos.y, 1)
 	}
 
 	simulate(stepSize = 1) {
 		this.generation += stepSize
-		this.population = 0
 
 		// Step forward using hashlife algorithm
-		this.current = this.root.nextCenter(stepSize)
+		this.root = this.root.nextCenter(stepSize)
+
+		this.population = this.root.count
 	}
 
 	serialize() {
 		// Serialize quadtree data back into an array of live cell positions
 		return '[]'
+	}
+
+	emptyNode(level) {
+		if (level < this.empty.length) {
+			return this.empty[level]
+		}
+
+		let node = this.emptyNode(level - 1)
+
+		let result = this.getNode(node, node, node, node)
+
+		this.empty.push(result)
+
+		return result
+	}
+
+	// Returns a node with the same IDs, or creates a new one
+	getNode(nw, ne, sw, se) {
+		let index = [nw.id, ne.id, sw.id, se.id]
+
+		// Node already exists with same pattern
+		if (this.memo[index]) {
+			return this.memo[index]
+		}
+
+		// Create new node with specified children
+		let result = new QuadTree(this, [nw, ne, sw, se])
+		this.memo[index] = result
+		return result
+	}
+
+	set(x, y, state) {
+		// Only set if state changed
+		if (this.root.get(x, y) !== state) {
+			this.root = this.root.set(x, y, state)
+		}
 	}
 }
