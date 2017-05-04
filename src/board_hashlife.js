@@ -61,6 +61,10 @@ class QuadTree {
 		return Math.pow(2, this.level)
 	}
 
+	get gensteps() {
+		return Math.pow(2, this.level - 2)
+	}
+
 	// Calculates the next state of a particular cell, based on number of live neighbors
 	score(state, neighbors) {
 		if ((state === 1 && neighbors === 2) || neighbors === 3) {
@@ -144,12 +148,10 @@ class QuadTree {
 	}
 
 	subdivide(stepSize) {
-		console.log(`subdivide(${stepSize}) at level ${this.level}`)
-		let halfSteps = Math.floor(Math.pow(2, this.level - 2) / 2)
+		let halfSteps = Math.floor(this.gensteps / 2)
 
 		let step1 = (stepSize <= halfSteps ? 0 : halfSteps)
 		let step2 = stepSize - step1
-		console.log(`Step 1: ${step1}, Step 2: ${step2}`)
 
 		let sub = this.getSavedCenter(step1)
 		let n00 = sub[0], n01 = sub[1], n02 = sub[2]
@@ -282,7 +284,7 @@ class BoardHashlife extends Board {
 		this.generation += stepSize
 
 		// Step forward using hashlife algorithm
-		this.root = this.root.nextCenter(stepSize)
+		this.step(stepSize)
 
 		this.population = this.root.count
 	}
@@ -316,7 +318,7 @@ class BoardHashlife extends Board {
 		}
 
 		// Create new node with specified children
-		let result = new QuadTree(this, [nw, ne, sw, se])
+		let result = new QuadTree(this, undefined, [nw, ne, sw, se])
 		this.memo[index] = result
 		return result
 	}
@@ -326,5 +328,41 @@ class BoardHashlife extends Board {
 		if (this.root.get(x, y) !== state) {
 			this.root = this.root.set(x, y, state)
 		}
+	}
+
+	getDouble() {
+		if (this.root.level == 0){
+			var index = [this.root.id, 0, 0, 0]
+			this.root = this.memo[index]
+			return
+		}
+
+		var e = this.emptyNode(this.root.level - 1)
+
+		let nwNode = this.getNode(e, e, e, this.root.nw)
+		let neNode = this.getNode(e, e, this.root.ne, e)
+		let swNode = this.getNode(e, this.root.sw, e, e)
+		let seNode = this.getNode(this.root.se, e, e, e)
+
+		this.root = this.getNode(nwNode, neNode, swNode, seNode)
+	}
+
+	step(steps) {
+		if (steps == 0){
+			return
+		}
+
+		this.getDouble()
+		this.getDouble()
+
+		while (steps > this.root.gensteps){
+			steps -= this.root.gensteps
+			this.root = this.root.nextCenter(this.root.gensteps)
+
+			this.getDouble()
+			this.getDouble()
+		}
+
+		this.root = this.root.nextCenter(steps)
 	}
 }
