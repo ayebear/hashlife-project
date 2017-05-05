@@ -38,6 +38,8 @@ class Recorder {
 			this.writer.end()
 			this.writer = csvWriter()
 		}
+		this.lastFilename = ''
+		this.lastAlgorithm = ''
 	}
 }
 
@@ -51,6 +53,7 @@ io.on('connection', function(socket) {
 	})
 
 	socket.on('disconnect', () => {
+		recorder.end()
 		console.log('Client disconnected')
 	})
 })
