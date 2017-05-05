@@ -8,18 +8,52 @@ class Main {
 		this.boardSwitcher = new BoardSwitcher('algorithm')
 
 		// Setup file drag and drop handler for the canvas
-		this.fileDrop = new FileDrop('board', data => {
+		this.fileDrop = new FileDrop('board', (data, name) => {
 			// Clear the board, import the pattern, and draw it
 			this.boardSwitcher.board.clear()
+
+			// Record initial memory usage and filename
+			this.record(0, name)
+
 			this.boardSwitcher.board.importPattern(data)
 			this.boardSwitcher.board.draw()
 		})
 
 		this.setupKeyboardInput()
-		this.setupStats()
+
+		// Try to connect to socket.io server
+		this.socket = io.connect('http://localhost:3000', {
+			reconnection: false
+		})
+		this.socket.on('connect', () => {
+			console.log('Connected to server successfully!')
+		})
+		this.socket.on('disconnect', () => {
+			console.log('Disconnected from server?')
+		})
 
 		// Start loop
 		requestAnimationFrame(() => {this.loop()})
+	}
+
+	// Record data by sending it to the socket.io server
+	record(time = 0, name = undefined) {
+		if (name) {
+			this.lastName = name
+		}
+		if (this.socket && this.socket.connected) {
+			// Time is in milliseconds (time for the last step)
+			// Memory is in bytes (current total heap memory used)
+			this.socket.emit('data', {
+				filename: this.lastName,
+				algorithm: this.boardSwitcher.current,
+				generation: this.boardSwitcher.board.generation,
+				population: this.boardSwitcher.board.population,
+				stepSize: this.stepSize,
+				time: time,
+				memory: this.getMemoryUsage()
+			})
+		}
 	}
 
 	setupKeyboardInput() {
@@ -27,8 +61,7 @@ class Main {
 
 		// Press enter to go forward once by the step size
 		this.listener.simple_combo('enter', () => {
-			this.boardSwitcher.board.simulate(this.stepSize)
-			this.boardSwitcher.board.draw()
+			this.runSimulation()
 		})
 
 		// Press space to toggle simulation
@@ -42,14 +75,20 @@ class Main {
 		})
 	}
 
-	setupStats() {
-		this.stats = new MemoryStats()
+	timedSimulation() {
+		let start = performance.now()
+		this.boardSwitcher.board.simulate(this.stepSize)
+		let end = performance.now()
+		return (end - start)
+	}
 
-		this.stats.domElement.style.position = 'fixed'
-		this.stats.domElement.style.right = '0px'
-		this.stats.domElement.style.bottom = '0px'
+	runSimulation() {
+		let time = this.timedSimulation()
 
-		document.body.appendChild(this.stats.domElement)
+		// Record timing and memory data for the current algorithm
+		this.record(time)
+
+		this.boardSwitcher.board.draw()
 	}
 
 	loop() {
@@ -58,12 +97,8 @@ class Main {
 
 		// Continue simulation if currently running
 		if (this.simulate) {
-			this.boardSwitcher.board.simulate(this.stepSize)
-			this.boardSwitcher.board.draw()
+			this.runSimulation()
 		}
-
-		// Update graphs
-		this.stats.update();
 
 		requestAnimationFrame(() => {this.loop()})
 	}
@@ -92,6 +127,14 @@ class Main {
 
 	clear() {
 		this.boardSwitcher.board.clear()
+	}
+
+	// Returns current memory usage in bytes, or 0 on error
+	getMemoryUsage() {
+		if (performance && performance.memory) {
+			return performance.memory.usedJSHeapSize
+		}
+		return 0
 	}
 }
 

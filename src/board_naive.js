@@ -23,7 +23,7 @@ class BoardNaive extends Board {
 			this.population--
 		}
 		this.cells.delete(cell)
-		this.drawCell(unhash(cell), 220)
+		this.drawCell(unhash(cell), 255)
 	}
 
 	// Returns count of neighboring live cells

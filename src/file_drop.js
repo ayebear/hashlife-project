@@ -40,7 +40,7 @@ function readFiles(files, callback){
 			finished.push(resultsSplit[i]);
 		}
 
-		callback(finished)
+		callback(finished, file.name)
 	}
 	reader.readAsText(file); // start reading the file data.
 }
