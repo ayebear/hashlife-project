@@ -8,9 +8,13 @@ class Main {
 		this.boardSwitcher = new BoardSwitcher('algorithm')
 
 		// Setup file drag and drop handler for the canvas
-		this.fileDrop = new FileDrop('board', data => {
+		this.fileDrop = new FileDrop('board', (data, name) => {
 			// Clear the board, import the pattern, and draw it
 			this.boardSwitcher.board.clear()
+
+			// Record initial memory usage and filename
+			this.record(0, name)
+
 			this.boardSwitcher.board.importPattern(data)
 			this.boardSwitcher.board.draw()
 		})
@@ -33,9 +37,22 @@ class Main {
 	}
 
 	// Record data by sending it to the socket.io server
-	record(data) {
-		if (this.socket.connected) {
-			this.socket.emit('data', data)
+	record(time = 0, name = undefined) {
+		if (name) {
+			this.lastName = name
+		}
+		if (this.socket && this.socket.connected) {
+			// Time is in milliseconds (time for the last step)
+			// Memory is in bytes (current total heap memory used)
+			this.socket.emit('data', {
+				filename: this.lastName,
+				algorithm: this.boardSwitcher.current,
+				generation: this.boardSwitcher.board.generation,
+				population: this.boardSwitcher.board.population,
+				stepSize: this.stepSize,
+				time: time,
+				memory: this.getMemoryUsage()
+			})
 		}
 	}
 
@@ -44,8 +61,7 @@ class Main {
 
 		// Press enter to go forward once by the step size
 		this.listener.simple_combo('enter', () => {
-			this.boardSwitcher.board.simulate(this.stepSize)
-			this.boardSwitcher.board.draw()
+			this.runSimulation()
 		})
 
 		// Press space to toggle simulation
@@ -59,28 +75,29 @@ class Main {
 		})
 	}
 
+	timedSimulation() {
+		let start = performance.now()
+		this.boardSwitcher.board.simulate(this.stepSize)
+		let end = performance.now()
+		return (end - start)
+	}
+
+	runSimulation() {
+		let time = this.timedSimulation()
+
+		// Record timing and memory data for the current algorithm
+		this.record(time)
+
+		this.boardSwitcher.board.draw()
+	}
+
 	loop() {
 		// Check if user changed algorithm
 		this.boardSwitcher.update()
 
 		// Continue simulation if currently running
 		if (this.simulate) {
-			let start = performance.now()
-
-			this.boardSwitcher.board.simulate(this.stepSize)
-
-			let end = performance.now()
-
-			// Record timing and memory data
-			this.record({
-				algorithm: this.boardSwitcher.current,
-				generation: this.boardSwitcher.board.generation,
-				population: this.boardSwitcher.board.population,
-				stepSize: this.stepSize,
-				time: (end - start)
-			})
-
-			this.boardSwitcher.board.draw()
+			this.runSimulation()
 		}
 
 		requestAnimationFrame(() => {this.loop()})
@@ -110,6 +127,14 @@ class Main {
 
 	clear() {
 		this.boardSwitcher.board.clear()
+	}
+
+	// Returns current memory usage in bytes, or 0 on error
+	getMemoryUsage() {
+		if (performance && performance.memory) {
+			return performance.memory.usedJSHeapSize
+		}
+		return 0
 	}
 }
 
