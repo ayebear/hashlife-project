@@ -10,21 +10,6 @@ class Board {
 		// Shared properties
 		this.population = 0
 		this.generation = 0
-
-		// Try to connect to socket.io server
-		this.socket = io('http://localhost:3000')
-		this.socket.on('connect', () => {
-			console.log('Connected to server successfully!')
-		})
-		this.socket.on('disconnect', () => {
-			console.log('Disconnected from server?')
-		})
-	}
-
-	record(data) {
-		if (this.socket.connected) {
-			this.socket.emit('data', data)
-		}
 	}
 
 	clearCanvas() {

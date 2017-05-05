@@ -16,10 +16,27 @@ class Main {
 		})
 
 		this.setupKeyboardInput()
-		this.setupStats()
+
+		// Try to connect to socket.io server
+		this.socket = io.connect('http://localhost:3000', {
+			reconnection: false
+		})
+		this.socket.on('connect', () => {
+			console.log('Connected to server successfully!')
+		})
+		this.socket.on('disconnect', () => {
+			console.log('Disconnected from server?')
+		})
 
 		// Start loop
 		requestAnimationFrame(() => {this.loop()})
+	}
+
+	// Record data by sending it to the socket.io server
+	record(data) {
+		if (this.socket.connected) {
+			this.socket.emit('data', data)
+		}
 	}
 
 	setupKeyboardInput() {
@@ -42,16 +59,6 @@ class Main {
 		})
 	}
 
-	setupStats() {
-		this.stats = new MemoryStats()
-
-		this.stats.domElement.style.position = 'fixed'
-		this.stats.domElement.style.right = '0px'
-		this.stats.domElement.style.bottom = '0px'
-
-		document.body.appendChild(this.stats.domElement)
-	}
-
 	loop() {
 		// Check if user changed algorithm
 		this.boardSwitcher.update()
@@ -63,7 +70,9 @@ class Main {
 			this.boardSwitcher.board.simulate(this.stepSize)
 
 			let end = performance.now()
-			this.boardSwitcher.board.record({
+
+			// Record timing and memory data
+			this.record({
 				algorithm: this.boardSwitcher.current,
 				generation: this.boardSwitcher.board.generation,
 				population: this.boardSwitcher.board.population,
@@ -73,9 +82,6 @@ class Main {
 
 			this.boardSwitcher.board.draw()
 		}
-
-		// Update graphs
-		this.stats.update();
 
 		requestAnimationFrame(() => {this.loop()})
 	}
