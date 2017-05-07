@@ -17,10 +17,11 @@ class QuadTree {
 		this.board = board
 
 		// Unique identifier for this node
-		if(typeof id === "undefined")
-			this.id = board.nextId++;
-		else
-			this.id = id;
+		if (typeof id === "undefined") {
+			this.id = board.nextId++
+		} else {
+			this.id = id
+		}
 
 		// These are more QuadTree instances, ordered as such: [nw, ne, sw, se]
 		// If this is undefined, we are in a leaf node
@@ -98,7 +99,7 @@ class QuadTree {
 		}
 
 		// Recurse down one level
-		let halfSize = Math.floor(this.width / 2);
+		let halfSize = Math.floor(this.width / 2)
 		return this.getChild(x, y).get(x % halfSize, y % halfSize)
 	}
 
@@ -214,8 +215,8 @@ class QuadTree {
 		// Get center 2x2 area of nodes, within the 4x4 area
 		let result = this.board.getNode(this.nw.se, this.ne.sw, this.sw.ne, this.se.nw)
 		this.cache[0] = result
-		if(typeof result === "undefined")
-			console.log("An undefined center?! That's impossible!");
+		if (typeof result === "undefined")
+			console.log("An undefined center?! That's impossible!")
 		return result
 	}
 
@@ -231,38 +232,34 @@ class QuadTree {
 		if (i == 8) return this.se
 	}
 
-	getList(result, x, y, rect){
+	getList(result, x, y, rect) {
 		//Returns the coordinates of all the filled cells in the given rect
-		if (this.count == 0){
-			return;
+		if (this.count == 0) {
+			return
 		}
 
-		if (rect)
-		{
-			//minx, miny, maxx, maxy = rect;
+		if (rect) {
+			//minx, miny, maxx, maxy = rect
 
-			let minx = rect.x;
-			let miny = rect.y;
-			let maxx = rect.x + rect.width;
-			let maxy = rect.y + rect.height;
+			let minx = rect.x
+			let miny = rect.y
+			let maxx = rect.x + rect.width
+			let maxy = rect.y + rect.height
 
-			if (x >= maxx || x + this.width <= minx || y >= maxy || y + this.width <= miny){
-				return;
+			if (x >= maxx || x + this.width <= minx || y >= maxy || y + this.width <= miny) {
+				return
 			}
 		}
 
-		if (this.level == 0)
-		{
-			result.push([x, y]); //I am not sure what is going on here ????
-		}
-		else
-		{
-			let half = this.width / 2;
+		if (this.level == 0) {
+			result.push([x, y])
+		} else {
+			let half = this.width / 2
 
-			this.nw.getList(result, x, y, rect);
-			this.ne.getList(result, x + half, y, rect);
-			this.sw.getList(result, x, y + half, rect);
-			this.se.getList(result, x + half, y + half, rect);
+			this.nw.getList(result, x, y, rect)
+			this.ne.getList(result, x + half, y, rect)
+			this.sw.getList(result, x, y + half, rect)
+			this.se.getList(result, x + half, y + half, rect)
 		}
 	}
 }
@@ -287,8 +284,8 @@ class BoardHashlife extends Board {
 		this.root = this.baseCells[0]
 
 		// Set the origin coordinates
-		this.originX = 0;
-		this.originY = 0;
+		this.originX = 0
+		this.originY = 0
 
 		// Hash table
 		this.memo = []
@@ -329,8 +326,8 @@ class BoardHashlife extends Board {
 
 		// Iterate through quadtree and draw data in leaf nodes
 		// An easier solution would be to get the area as a list, then just go through that and draw those as pixels
-		let result = [];
-		this.root.getList(result, this.originX, this.originY);
+		let result = []
+		this.root.getList(result, this.originX, this.originY)
 		for (let pos of result) {
 			this.drawCell({x: pos[0], y: pos[1]}, 0)
 		}
@@ -376,8 +373,8 @@ class BoardHashlife extends Board {
 
 	// Returns a node with the same IDs, or creates a new one
 	getNode(nw, ne, sw, se) {
-		if(typeof nw === "undefined" || typeof ne === "undefined" || typeof sw === "undefined" || typeof se === "undefined")
-			console.log("An undefined child! How did that happen?!");
+		if (typeof nw === "undefined" || typeof ne === "undefined" || typeof sw === "undefined" || typeof se === "undefined")
+			console.log("An undefined child! How did that happen?!")
 		let index = [nw.id, ne.id, sw.id, se.id]
 
 		// Node already exists with same pattern
@@ -395,12 +392,11 @@ class BoardHashlife extends Board {
 
 		// Only set if state changed
 		if (this.root.get(x - this.originX, y - this.originY) !== state) {
-			let width = this.root.width;
+			let width = this.root.width
 
-			while (x < this.originX || y < this.originY || x >= this.originX + width || y >= this.originY + width)
-			{
-				this.getDouble();
-				width = this.root.width;
+			while (x < this.originX || y < this.originY || x >= this.originX + width || y >= this.originY + width) {
+				this.getDouble()
+				width = this.root.width
 			}
 
 			this.root = this.root.set(x - this.originX, y - this.originY, state)
@@ -408,14 +404,14 @@ class BoardHashlife extends Board {
 	}
 
 	getDouble() {
-		if (this.root.level == 0){
+		if (this.root.level == 0) {
 			let index = [this.root.id, 0, 0, 0]
 			this.root = this.memo[index]
 			return
 		}
 
-		this.originX -= this.root.width / 2;
-		this.originY -= this.root.width / 2;
+		this.originX -= this.root.width / 2
+		this.originY -= this.root.width / 2
 
 		let e = this.emptyNode(this.root.level - 1)
 
@@ -437,13 +433,11 @@ class BoardHashlife extends Board {
 				return
 			}
 
-			var sub = null;
-			for (var index = 0; index < 9; index++)
-			{
+			let sub = null
+			for (let index = 0; index < 9; index++) {
 				sub = this.root.subquad(index)
 
-				if (sub.count == this.root.count)
-				{
+				if (sub.count == this.root.count) {
 					this.originX += Math.floor(sub.width / 2) * Math.floor(index % 3)
 					this.originY += Math.floor(sub.width / 2) * Math.floor(index / 3)
 					this.root = sub
@@ -462,8 +456,7 @@ class BoardHashlife extends Board {
 			return node
 		}
 
-		if (typeof(trans[node.id]) == "undefined")
-		{
+		if (typeof(trans[node.id]) == "undefined") {
 			trans[node.id] = this.getNode(
 				this.canonicalize(node.nw, trans),
 				this.canonicalize(node.ne, trans),
@@ -472,7 +465,7 @@ class BoardHashlife extends Board {
 		}
 
 		return trans[node.id]
-	};
+	}
 
 	collect() {
 		this.trim()
@@ -493,7 +486,7 @@ class BoardHashlife extends Board {
 	}
 
 	step(steps) {
-		if (steps <= 0){
+		if (steps <= 0) {
 			return
 		}
 
@@ -504,7 +497,7 @@ class BoardHashlife extends Board {
 		this.getDouble()
 		this.getDouble()
 
-		while (steps > this.root.gensteps){
+		while (steps > this.root.gensteps) {
 			steps -= this.root.gensteps
 			this.root = this.root.nextCenter(this.root.gensteps)
 
@@ -514,10 +507,10 @@ class BoardHashlife extends Board {
 
 		this.root = this.root.nextCenter(steps)
 
-		this.originX = this.originX + this.root.width / 2;
-		this.originY = this.originY + this.root.width / 2;
+		this.originX = this.originX + this.root.width / 2
+		this.originY = this.originY + this.root.width / 2
 
-		this.draw();
+		this.draw()
 	}
 
 }
