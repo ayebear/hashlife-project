@@ -7,6 +7,9 @@ const ne = 1
 const sw = 2
 const se = 3
 
+// Max width of board
+const maxSize = Math.pow(2, 28)
+
 // A node of a quad tree, meant to be used by the hashlife implementation
 class QuadTree {
 	constructor(board, id = undefined, children = undefined) {
@@ -129,6 +132,7 @@ class QuadTree {
 	}
 
 	// Note: Method should only be ran at level 2
+	// Simulates a 2x2 area (each cell needs a count of live cells around it, in a 3x3 area)
 	simulate() {
 		// Get an array of arrays of child IDs
 		let ids = this.children.map(child => child.getIds())
@@ -151,6 +155,7 @@ class QuadTree {
 		return this.board.memo[scores]
 	}
 
+	// Split up sub problems
 	subdivide(stepSize) {
 		let halfSteps = Math.floor(this.gensteps / 2)
 
@@ -181,7 +186,7 @@ class QuadTree {
 
 		let result = undefined
 
-		// Do some magic at level 2, other magic at other levels
+		// Simulate or continue recursing
 		if (this.level === 2) {
 			result = this.simulate()
 		} else {
@@ -291,7 +296,7 @@ class BoardHashlife extends Board {
 		// All possible states of a 2x2 cell
 		for (let i = 0; i < 16; ++i) {
 			// Example: [1, 0, 1, 0]
-			let index = [i & 1, (i & 2) / 2, (i & 4) / 4, (i & 8) / 8]
+			let index = this.getIndex(i)
 
 			// Example: [Alive, Dead, Alive, Dead]
 			let nodes = index.map(state => this.baseCells[state])
@@ -300,10 +305,18 @@ class BoardHashlife extends Board {
 			this.memo[index] = new QuadTree(this, undefined, nodes)
 		}
 
-		// Stores empty nodes
-		this.empty = [this.baseCells[0], this.memo[[0, 0, 0, 0]]]
+		this.resetEmpty()
 
 		this.coreIds = this.nextId - 1
+	}
+
+	getIndex(i) {
+		return [i & 1, (i & 2) / 2, (i & 4) / 4, (i & 8) / 8]
+	}
+
+	resetEmpty() {
+		// Stores empty nodes
+		this.empty = [this.baseCells[0], this.memo[[0, 0, 0, 0]]]
 	}
 
 	clear() {
@@ -414,9 +427,78 @@ class BoardHashlife extends Board {
 		this.root = this.getNode(nwNode, neNode, swNode, seNode)
 	}
 
+	trim() {
+		while (true) {
+			if (this.root.count === 0) {
+				this.root = this.baseCells[0]
+			}
+
+			if (this.root.level <= 1) {
+				return
+			}
+
+			var sub = null;
+			for (var index = 0; index < 9; index++)
+			{
+				sub = this.root.subquad(index)
+
+				if (sub.count == this.root.count)
+				{
+					this.originX += Math.floor(sub.width / 2) * Math.floor(index % 3)
+					this.originY += Math.floor(sub.width / 2) * Math.floor(index / 3)
+					this.root = sub
+					break
+				}
+				sub = null
+			}
+
+			if (sub === null)
+				return
+		}
+	}
+
+	canonicalize(node, trans) {
+		if (node.id < 18) {
+			return node
+		}
+
+		if (typeof(trans[node.id]) == "undefined")
+		{
+			trans[node.id] = this.getNode(
+				this.canonicalize(node.nw, trans),
+				this.canonicalize(node.ne, trans),
+				this.canonicalize(node.sw, trans),
+				this.canonicalize(node.se, trans))
+		}
+
+		return trans[node.id]
+	};
+
+	collect() {
+		this.trim()
+
+		this.resetEmpty()
+
+		let old = this.memo
+		this.memo = []
+
+		// Copy only initial 16 2x2 patterns
+		for (let i = 0; i < 16; ++i) {
+			let index = this.getIndex(i)
+			this.memo[index] = old[index]
+		}
+
+		let trans = []
+		this.root = this.canonicalize(this.root, trans)
+	}
+
 	step(steps) {
-		if (steps == 0){
+		if (steps <= 0){
 			return
+		}
+
+		if (this.root.width > maxSize) {
+			this.collect()
 		}
 
 		this.getDouble()
